@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import axios from 'axios';
+import _ from 'lodash'
+import axios from 'axios'
 
-const BASE_AMOUNT = process.argv[2] || 1;
-const BASE = 'ETH';
-const QUOTES = ['BTC', 'LTC', 'BCH'];
+const BASE_AMOUNT = process.argv[2] || 1
+const BASE = 'ETH'
+const QUOTES = ['BTC', 'LTC', 'BCH']
 
 const bit2CTicker = (quote) =>
   axios.get(`https://bit2c.co.il/Exchanges/${quote}Nis/Ticker.json`)
@@ -11,9 +11,9 @@ const bit2CTicker = (quote) =>
 const shapeShiftMarket = (quote) =>
   axios.get(`https://shapeshift.io/marketinfo/${_.toLower(BASE)}_${quote}`)
 
-Promise.all(QUOTES.map(async (coin) => {
-  const { data: ssMarket } = await shapeShiftMarket(_.toLower(coin));
-  const { data: b2cTicker } = await bit2CTicker(_.upperCase(coin));
+const findRate = async (coin) => {
+  const { data: ssMarket } = await shapeShiftMarket(_.toLower(coin))
+  const { data: b2cTicker } = await bit2CTicker(_.upperCase(coin))
   const coinToNis = ((BASE_AMOUNT * ssMarket.rate) - (ssMarket.minerFee * 2)) * b2cTicker.l
   return {
     amount: BASE_AMOUNT,
@@ -25,10 +25,13 @@ Promise.all(QUOTES.map(async (coin) => {
     minerFee: ssMarket.minerFee,
     coinToNis: coinToNis.toFixed(2),
   }
-})).then(data => {
-  const bestCoin = _.maxBy(data, 'coinToNis');
+}
+
+(async () => {
+  const coinData = await Promise.all(QUOTES.map(findRate))
+  const bestCoin = _.maxBy(coinData, 'coinToNis')
   console.log(`Best coin is ${bestCoin.quote}. ${BASE_AMOUNT} ${BASE} = ${bestCoin.coinToNis} NIS`)
   console.log('------------')
-  data.forEach(({ amount, base, quote, coinToNis }) =>
+  coinData.forEach(({ amount, base, quote, coinToNis }) =>
     console.log(`${quote}: ${coinToNis} NIS`))
-});
+})()
