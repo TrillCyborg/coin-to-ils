@@ -12,7 +12,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "colors": "^1.1.2",
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.5",
+    "numeral": "^2.0.6"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
