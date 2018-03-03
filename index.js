@@ -15,6 +15,7 @@ const findRate = async (coin) => {
   const { data: ssMarket } = await shapeShiftMarket(_.toLower(coin))
   const { data: b2cTicker } = await bit2CTicker(_.upperCase(coin))
   const coinToNis = ((BASE_AMOUNT * ssMarket.rate) - (ssMarket.minerFee * 2)) * b2cTicker.l
+  const coinToNisAvg = ((BASE_AMOUNT * ssMarket.rate) - (ssMarket.minerFee * 2)) * b2cTicker.av
   return {
     amount: BASE_AMOUNT,
     base: BASE.toUpperCase(),
@@ -24,6 +25,7 @@ const findRate = async (coin) => {
     bit2CLast: b2cTicker.ll,
     minerFee: ssMarket.minerFee,
     coinToNis: coinToNis.toFixed(2),
+    coinToNisAvg: coinToNisAvg.toFixed(2),
   }
 }
 
@@ -32,6 +34,6 @@ const findRate = async (coin) => {
   const bestCoin = _.maxBy(coinData, 'coinToNis')
   console.log(`Best coin is ${bestCoin.quote}. ${BASE_AMOUNT} ${BASE} = ${bestCoin.coinToNis} NIS`)
   console.log('------------')
-  coinData.forEach(({ amount, base, quote, coinToNis }) =>
-    console.log(`${quote}: ${coinToNis} NIS`))
+  coinData.forEach(({ amount, base, quote, coinToNis, coinToNisAvg }) =>
+    console.log(`${quote}: ${coinToNis} NIS ------ 24h Avg: ${coinToNisAvg}`))
 })()
