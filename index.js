@@ -4,7 +4,7 @@ import colors from 'colors';
 
 const BASE_AMOUNT = process.argv[2] || 1
 const BASE = 'ETH'
-const QUOTES = ['BTC', 'LTC', 'BCH']
+const QUOTES = ['BTC', 'LTC', 'BCH', 'BTG']
 
 const bit2CTicker = (quote) =>
   axios.get(`https://bit2c.co.il/Exchanges/${quote}Nis/Ticker.json`)
