@@ -33,8 +33,8 @@ const findRate = async (coin) => {
 (async () => {
   const coinData = await Promise.all(QUOTES.map(findRate))
   const bestCoin = _.maxBy(coinData, 'coinToNis')
-  console.log(`Best coin is ${bestCoin.quote.cyan}. ${BASE_AMOUNT} ${BASE} = ${bestCoin.coinToNis.cyan} NIS`)
+  console.log(`💸  Best coin is ${bestCoin.quote.cyan}. ${BASE_AMOUNT} ${BASE} = ${bestCoin.coinToNis.cyan} NIS 💸`)
   console.log('------------')
-  coinData.forEach(({ amount, base, quote, coinToNis, coinToNisAvg }) =>
-    console.log(`${quote}: ${coinToNis} NIS ------ 24h Avg: ${coinToNisAvg}`))
+  _.orderBy(coinData, 'coinToNis', 'desc').forEach(({ amount, base, quote, coinToNis, coinToNisAvg, minerFee }, i) =>
+    console.log(`${i + 1}. ${quote}: ${coinToNis} NIS ------ 24h Avg: ${coinToNisAvg} ------ Miner Fee: ${minerFee}`))
 })()
